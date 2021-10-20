@@ -1,0 +1,24 @@
+name: Raku test
+on:
+  push:
+    branches:
+      '*'
+jobs:
+  raku:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+        raku-version:
+          - "latest"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Raku/setup-raku@v1
+        with:
+          raku-version: ${{ matrix.raku-version }}
+      - name: Test
+        run: zef install .
+
