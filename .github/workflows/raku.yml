@@ -1,16 +1,14 @@
-name: Raku test
+name: test
 on:
   push:
     branches:
       '*'
 jobs:
-  raku:
+  test:
     strategy:
       matrix:
         os:
           - ubuntu-latest
-          - macOS-latest
-          - windows-latest
         raku-version:
           - "latest"
     runs-on: ${{ matrix.os }}
@@ -19,6 +17,13 @@ jobs:
       - uses: Raku/setup-raku@v1
         with:
           raku-version: ${{ matrix.raku-version }}
+      - name: Install download configurator
+        run: wget -O .zef-configurator https://raw.githubusercontent.com/elerille/micro/main/bin/raku-micro
+      - name: Install deps
+        run: |
+          zef upgrade zef
+          zef install JSON::Fast
+          raku .zef-configurator configure .zef-conf.json
       - name: Test
-        run: zef install .
+        run: zef --config-path=.zef-conf.json install .
 
